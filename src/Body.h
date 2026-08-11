@@ -1,12 +1,11 @@
 #pragma once
 #include <raymath.h>
+#include <variant>
 
+struct RectangleShape { float width; float height;};
+struct CircleShape    { float radius;};
 
-enum class ShapeType {Rectangle, Circle};
-
-struct Rectangle_ { float width; float height;};
-
-struct Circle { Vector2 center; float radius;};
+using Shape = std::variant<RectangleShape, CircleShape>;
 
 /*
  * CLASS DECLARATION Body
@@ -17,7 +16,6 @@ struct Circle { Vector2 center; float radius;};
  * 1. Mass
  * 2. Position
  * 3. Velocity
- * 4. Acceleration
  */
 class Body
 {
@@ -27,13 +25,12 @@ private:
     Vector2 position;
     Vector2 velocity;
 
-    ShapeType shape;
+    Shape shape;
 
     /*
      * CONSTRUCTORS
      */
-    Body();
-    Body(float mass_, Vector2 position_);
+    Body(float mass_, Vector2 position_, Shape shape_);
 public:
     /*
      * CONSTRUCTORS
@@ -41,27 +38,17 @@ public:
     static Body MakeRectangle(float mass_, Vector2 position_, float width, float height);
     static Body MakeCircle(float mass_, Vector2 position_, float radius);
 
-    union 
-    {
-        Rectangle_ rectangle;
-        Circle    circle;
-    };
-
-    /*
-     * DESTRUCTOR
-     */
-    ~Body();
 
     /*
      * GETTERS
      */
-    float       GetMass();
-    Vector2     GetPosition();
-    Vector2     GetVelocity();
-    ShapeType   GetShape();
-    float       GetWidth();
-    float       GetHeight();
-    float       GetRadius();
+    [[nodiscard]] float   GetMass() const;
+    [[nodiscard]] Vector2 GetPosition() const;
+    [[nodiscard]] Vector2 GetVelocity() const;
+    [[nodiscard]] float   GetWidth() const;
+    [[nodiscard]] float   GetHeight() const;
+    [[nodiscard]] float   GetRadius() const;
+    [[nodiscard]] const Shape& GetShape() const;
 
     /*
      * SETTERS
@@ -69,8 +56,6 @@ public:
     void SetMass(float mass_);
     void SetPosition(Vector2 position_);
     void SetVelocity(Vector2 velocity_);
-    void SetShape(ShapeType shape_);
-    void SetAllAttributes(float mass_, Vector2 position_, Vector2 velocity_, ShapeType shape_);
 
     /*
      * OTHER FUNCTIONS

@@ -9,83 +9,79 @@
  * 1. Mass
  * 2. Position
  * 3. Velocity
- * 4. Acceleration
  */
 
 /*
  * CONSTRUCTORS
  */
-Body::Body()
-    :   mass(float{}),
-        position(Vector2{}),
-        velocity(Vector2{})
-{}
-
-Body::Body(float mass_, Vector2 position_)
+Body::Body(float mass_, Vector2 position_, Shape shape_)
     :   mass(mass_),
         position(position_),
-        velocity(Vector2{}) 
+        velocity(Vector2{}),
+        shape(shape_)
 {}
 
 Body Body::MakeRectangle(float mass_, Vector2 position_, float width, float height)
 {
-    Body body = Body(mass_, position_);
-    body.shape = ShapeType::Rectangle;
-    
-    body.rectangle = {width, height};
-    return body;
+    return Body(mass_, position_, RectangleShape{width, height});
 }
 
 Body Body::MakeCircle(float mass_, Vector2 position_, float radius)
 {
-    Body body = Body(mass_, position_);
-    body.shape = ShapeType::Circle;
-    
-    body.circle = {radius};
-
-    return body;
+    return Body(mass_, position_, CircleShape{radius});
 }
     
-/*
- * DESTRUCTORS
- */
-Body::~Body() {}
 
 /*
  * GETTERS
  */
-float Body::GetMass()
+float Body::GetMass() const
 {
     return mass;
 }
 
-Vector2 Body::GetPosition()
+Vector2 Body::GetPosition() const
 {
     return position;
 }
-Vector2 Body::GetVelocity()
+Vector2 Body::GetVelocity() const
 {
     return velocity;
 }
 
-ShapeType Body::GetShape()
+float Body::GetWidth() const
+{
+    if (auto attempt = std::get_if<RectangleShape>(&shape))
+    {
+        return attempt->width;
+    }
+
+    return 0;
+}
+
+float Body::GetHeight() const
+{
+    if (auto attempt = std::get_if<RectangleShape>(&shape))
+    {
+        return attempt->height;
+    }
+
+    return 0;
+}
+
+float Body::GetRadius() const
+{
+    if (auto attempt = std::get_if<CircleShape>(&shape))
+    {
+        return attempt->radius;
+    }
+
+    return 0;
+}
+
+const Shape& Body::GetShape() const
 {
     return shape;
-}
-
-float Body::GetWidth()
-{
-    return rectangle.width;
-}
-
-float Body::GetHeight()
-{
-    return rectangle.height;
-}
-
-float Body::GetRadius()
-{
-    return circle.radius;
 }
 
 
@@ -105,17 +101,4 @@ void Body::SetPosition(Vector2 position_)
 void Body::SetVelocity(Vector2 velocity_)
 {
     velocity = velocity_;
-}
-
-void Body::SetShape(ShapeType shape_)
-{
-    shape = shape_;
-}
-
-void Body::SetAllAttributes(float mass_, Vector2 position_, Vector2 velocity_, ShapeType shape_)
-{
-    mass         = mass_;
-    position     = position_;
-    velocity     = velocity_;
-    shape        = shape_;
 }
