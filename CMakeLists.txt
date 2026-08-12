@@ -8,7 +8,8 @@ add_subdirectory(C:/repos/raylib raylib_build)
 
 add_executable(myproject 
             src/main.cpp
-            src/Body.cpp)
+            src/Body.cpp
+            src/GravityForce.cpp)
 target_link_libraries(myproject raylib)
 
 # Windows-specific system libs raylib needs
